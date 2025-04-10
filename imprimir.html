@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imprimir Pedido</title>
+    <style>
+        body {
+            font-family: monospace; /* Fonte comum para impressoras térmicas */
+            font-size: 12px;
+            margin: 5mm; /* Margens pequenas para aproveitar o papel */
+            height: 30%;
+        }
+
+        .pedido-info {
+            margin-bottom: 10px;
+        }
+
+        .item-lista {
+            margin-bottom: 5px;
+        }
+
+        .total {
+            margin-top: 10px;
+            border-top: 1px dashed #000;
+            padding-top: 5px;
+            text-align: right;
+        }
+
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="conteudo-pedido">
+        <h2 class="center">Sua Pizza Deliciosa!</h2>
+        <div class="pedido-info">
+            <strong>Nome:</strong> <span id="nome-cliente"></span><br>
+            <strong>Telefone:</strong> <span id="telefone-cliente"></span><br>
+            <strong>Endereço:</strong> <span id="endereco-cliente"></span><br>
+            <hr>
+            <strong>Itens do Pedido:</strong><br>
+            <div id="lista-de-itens"></div>
+            <hr>
+            <div class="total">
+                <strong>Total: R$ <span id="total-pedido"></span></strong>
+            </div>
+            <p class="center">Obrigado pela sua preferência!</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pedidoString = localStorage.getItem('pedido');
+            if (pedidoString) {
+                const pedido = JSON.parse(pedidoString);
+                document.getElementById('nome-cliente').textContent = pedido.nome;
+                document.getElementById('telefone-cliente').textContent = pedido.telefone;
+                document.getElementById('endereco-cliente').textContent = pedido.endereco;
+                const listaDeItens = document.getElementById('lista-de-itens');
+                pedido.itens.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('item-lista');
+                    itemDiv.textContent = `${item.nome} - R$ ${item.valor.toFixed(2)}`;
+                    listaDeItens.appendChild(itemDiv);
+                });
+                document.getElementById('total-pedido').textContent = pedido.total;
+
+                // Simular a impressão após carregar os dados (opcional)
+                window.print();
+                // Limpar o localStorage após a impressão (opcional)
+                localStorage.removeItem('pedido');
+            } else {
+                document.getElementById('conteudo-pedido').innerHTML = '<p>Nenhum pedido encontrado.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
